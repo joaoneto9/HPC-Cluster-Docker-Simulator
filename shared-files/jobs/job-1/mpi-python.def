@@ -1,0 +1,27 @@
+Bootstrap: docker
+From: ubuntu:24.04
+
+%environment
+export PATH=/opt/venv/bin:$PATH
+export PYTHONPATH=/opt/venv/lib/python3.12/site-packages:$PYTHONPATH
+
+%post
+apt-get update
+
+DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
+    openmpi-bin \
+    libopenmpi-dev \
+    libpmix-dev 
+
+python3 -m venv --system-site-packages /opt/venv
+
+/opt/venv/bin/pip install --no-cache-dir mpi4py
+
+apt-get clean
+rm -rf /var/lib/apt/lists/*
+
+%runscript
+exec python3 "$@"

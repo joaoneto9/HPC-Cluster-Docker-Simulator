@@ -1,0 +1,42 @@
+  services:
+    login:
+      build: .
+      hostname: login
+      environment:
+        - NODE_ROLE=login
+      volumes:
+        - ./credentials/munge:/etc/munge:ro
+        - ./credentials/slurm:/etc/slurm:ro
+        - ./shared-files:/app
+        
+    controller:
+      build: .
+      hostname: controller
+      environment:
+        - NODE_ROLE=controller
+      volumes:
+        - ./credentials/munge:/etc/munge:ro
+        - ./credentials/slurm:/etc/slurm:ro
+        - ./shared-files:/app
+
+    compute-1:
+      build: .
+      hostname: compute-1
+      privileged: true
+      environment:
+        - NODE_ROLE=compute
+      volumes:
+        - ./credentials/munge:/etc/munge:ro
+        - ./credentials/slurm:/etc/slurm:ro
+        - ./shared-files:/app
+
+    compute-2:
+      build: .
+      hostname: compute-2
+      privileged: true
+      environment:
+        - NODE_ROLE=compute
+      volumes:
+        - ./credentials/munge:/etc/munge:ro
+        - ./credentials/slurm:/etc/slurm:ro
+        - ./shared-files:/app

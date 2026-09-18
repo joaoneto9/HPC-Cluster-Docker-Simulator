@@ -1,0 +1,4 @@
+*.sif
+munge.key
+slurm.conf
+cgroup.conf
