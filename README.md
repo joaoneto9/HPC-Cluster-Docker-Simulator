@@ -7,14 +7,26 @@ Docker-based HPC cluster simulator with four containers representing a login nod
 - Clone the repository
 - Put the correct content of the files: 
 
-1. **munge.key.example** -> **munge.key**
+1. **munge.key.example** -> **munge.key** (generate the correct key archive value in the section "Geting a valid munge.key")
 2. **slurm.conf.example** -> **slurm.conf**
 3. **cgroup.conf.example** -> **cgroup.conf**
+
+```bash
+cp ./credentials/slurm/slurm.conf.example ./credentials/slurm/slurm.conf
+cp ./credentials/slurm/cgroup.conf.example ./credentials/slurm/cgroup.conf
+```
 
 - For the last two archives you can just change the names.
 - But for the first one - **munge.key** - you may need to do some steps to generate a valid munge key fie.
 
 ## Geting a valid munge.key file
+
+```bash
+dd if=/dev/urandom bs=1 count=1024 of=./credentials/munge/munge.key
+```
+
+- With this command the private key archive value will be generate at the path **./credentials/munge/munge.key**.
+- This path will be shared with the containers by the docker volumes to the **/etc/munge/munge.key** path in the containers.
 
 ## How to config the permissions
 
@@ -24,11 +36,31 @@ Docker-based HPC cluster simulator with four containers representing a login nod
 
 ```bash
 sudo chown 999:999 ./credentials/slurm
-sudo chown 100:101 ./credentials/munge
 sudo chown 100:101 ./credentials/munge/munge.key
 ```
 
-## How to build the cluster
+## How to Submit Jobs
+
+- For now, jobs are submitted using **Slurm's `srun` command** together with **Apptainer**. 
+- This approach allows each job to be executed inside an isolated container image containing the dependencies required by the application, without requiring those dependencies to be installed directly on the compute nodes.
+- Before submitting a job, the required execution environment must be defined in an Apptainer definition file (`.def`). This file specifies the base image, software packages, libraries, environment variables, and other configurations required by the application.
+
+
+### Install the apptainer dependencie in your machine (host):
+
+```bash
+sudo apt install -y apptainer
+```
+
+### Create the image for the job in the Host: 
+
+- The `.def` file is then used to build an Apptainer image in the **SIF (`.sif`) format**:
+
+```bash
+apptainer build ./shared-files/jobs/jobs-1/mpi-python.sif ./shared-files/jobs/jobs-1/mpi-python.def
+```
+
+### Build the container and connect to the Login node:
 
 - After the configurations run this command to build the cluster:
 
@@ -42,4 +74,21 @@ docker compose up -d
 docker exec -it hpc-cluster-simulation-login-1 /bin/bash
 ```
 
-## How to submit jobs
+### Submitting the job with `srun`:
+
+- Once the image has been created, it can be used when submitting the job through Slurm. For example:
+
+```bash
+srun --nodes=2 \
+     --ntasks=4 \
+     --ntasks-per-node=2 \
+     --time=00:05:00 \
+     --mpi=pmix \
+     apptainer exec \
+     /app/jobs/job-1/mpi-python.sif \
+     python3 /app/jobs/job-1/program.py
+```
+
+- **observation-1:** In this workflow, `srun` is responsible for requesting and launching the required tasks across the Slurm-managed compute nodes, while Apptainer provides the isolated software environment in which the application is executed.
+
+- **observation-2:** This separation allows the compute nodes to remain independent of application-specific dependencies. Instead, the dependencies required by a particular job are packaged within its corresponding Apptainer image.
