@@ -32,11 +32,23 @@ dd if=/dev/urandom bs=1 count=1024 of=./credentials/munge/munge.key
 
 - There are some archives or directories that the **munge** and the **slurm** have to be the owners.
 - For that we need to understand that the **munge** user in the containers is UID=100 and GID=101, also the **slurm** user in the container  is UID=999 and GID=999.
-- So after cloning the repository you may need to set this information running this commands:
+- Althougth, the entrypoint file do this:
 
-```bash
-sudo chown 999:999 ./credentials/slurm
-sudo chown 100:101 ./credentials/munge/munge.key
+```sh
+setup_munge() {
+    cp /tmp/munge.key /etc/munge/munge.key
+    chown munge:munge /etc/munge/munge.key
+    chown -R munge:munge /etc/munge /run/munge
+    chmod 400 /etc/munge/munge.key
+}
+
+setup_slurm() {
+    chown slurm:slurm /var/spool/slurmctld && \
+    chown slurm:slurm /etc/slurm
+}
+
+setup_munge
+setup_slurm
 ```
 
 ## How to Submit Jobs
@@ -57,7 +69,7 @@ sudo apt install -y apptainer
 - The `.def` file is then used to build an Apptainer image in the **SIF (`.sif`) format**:
 
 ```bash
-apptainer build ./shared-files/jobs/jobs-1/mpi-python.sif ./shared-files/jobs/jobs-1/mpi-python.def
+apptainer build ./shared-files/jobs/job-1/mpi-python.sif ./shared-files/jobs/job-1/mpi-python.def
 ```
 
 ### Build the container and connect to the Login node:
@@ -66,12 +78,12 @@ apptainer build ./shared-files/jobs/jobs-1/mpi-python.sif ./shared-files/jobs/jo
 
 ```bash
 docker compose up -d
-```
+``` 
 
 - Run this command to get into the **login** container:
 
 ```bash
-docker exec -it hpc-cluster-simulation-login-1 /bin/bash
+docker exec -it [nome-do-container-de-login] /bin/bash
 ```
 
 ### Submitting the job with `srun`:
@@ -79,14 +91,14 @@ docker exec -it hpc-cluster-simulation-login-1 /bin/bash
 - Once the image has been created, it can be used when submitting the job through Slurm. For example:
 
 ```bash
-srun --nodes=2 \
-     --ntasks=4 \
-     --ntasks-per-node=2 \
-     --time=00:05:00 \
-     --mpi=pmix \
-     apptainer exec \
-     /app/jobs/job-1/mpi-python.sif \
-     python3 /app/jobs/job-1/program.py
+srun \
+  --nodes=2 \
+  --ntasks=2 \
+  --ntasks-per-node=1 \
+  --time=00:05:00 \
+  --mpi=pmix \
+  apptainer exec --no-mount /etc/localtime mpi-python.sif \
+  python3 program.py
 ```
 
 - **observation-1:** In this workflow, `srun` is responsible for requesting and launching the required tasks across the Slurm-managed compute nodes, while Apptainer provides the isolated software environment in which the application is executed.

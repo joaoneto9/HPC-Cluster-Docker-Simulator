@@ -5,7 +5,7 @@
       environment:
         - NODE_ROLE=login
       volumes:
-        - ./credentials/munge:/etc/munge:ro
+        - ./credentials/munge/munge.key:/tmp/munge.key:ro
         - ./credentials/slurm:/etc/slurm:ro
         - ./shared-files:/app
         
@@ -15,7 +15,7 @@
       environment:
         - NODE_ROLE=controller
       volumes:
-        - ./credentials/munge:/etc/munge:ro
+        - ./credentials/munge/munge.key:/tmp/munge.key:ro
         - ./credentials/slurm:/etc/slurm:ro
         - ./shared-files:/app
 
@@ -26,7 +26,7 @@
       environment:
         - NODE_ROLE=compute
       volumes:
-        - ./credentials/munge:/etc/munge:ro
+        - ./credentials/munge/munge.key:/tmp/munge.key:ro
         - ./credentials/slurm:/etc/slurm:ro
         - ./shared-files:/app
 
@@ -37,6 +37,6 @@
       environment:
         - NODE_ROLE=compute
       volumes:
-        - ./credentials/munge:/etc/munge:ro
+        - ./credentials/munge/munge.key:/tmp/munge.key:ro
         - ./credentials/slurm:/etc/slurm:ro
         - ./shared-files:/app

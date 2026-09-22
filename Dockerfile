@@ -14,13 +14,9 @@ RUN apt-get update && \
         fuse-overlayfs \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /run/munge /etc/munge && \
-    chown munge:munge /run/munge /etc/munge
+RUN mkdir -p /etc/munge /run/munge
 
-RUN mkdir -p /var/spool/slurmctld /var/log/slurm && \
-    chown slurm:slurm /var/spool/slurmctld
-
-RUN mkdir -p /var/spool/slurmd
+RUN mkdir -p /etc/slurm /var/spool/slurmctld /var/log/slurm /var/spool/slurmd
 
 COPY script.sh /script.sh
 RUN chmod +x /script.sh
