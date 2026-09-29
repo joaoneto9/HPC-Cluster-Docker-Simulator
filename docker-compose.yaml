@@ -12,6 +12,8 @@
     controller:
       build: .
       hostname: controller
+      ports: 
+        - "9090:9090"
       environment:
         - NODE_ROLE=controller
       volumes:
