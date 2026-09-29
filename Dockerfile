@@ -4,10 +4,13 @@ WORKDIR /app
 
 RUN apt-get update && \
     apt-get install -y \
+        curl \
         munge \
         slurmd \
         slurmctld \
         slurm-client \
+        prometheus \
+        prometheus-node-exporter \
         apptainer \
         squashfuse \
         fuse3 \

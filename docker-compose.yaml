@@ -12,11 +12,14 @@
     controller:
       build: .
       hostname: controller
+      ports: 
+        - "9090:9090"
       environment:
         - NODE_ROLE=controller
       volumes:
         - ./credentials/munge/munge.key:/tmp/munge.key:ro
         - ./credentials/slurm:/etc/slurm:ro
+        - ./credentials/prometheus:/etc/prometheus:ro
         - ./shared-files:/app
 
     compute-1:
