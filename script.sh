@@ -24,6 +24,7 @@ case "$NODE_ROLE" in
         ;; 
     compute)  
         su -s /bin/bash munge -c "munged --foreground" & 
+        prometheus-node-exporter &
         slurmd -D
         ;;
     login)

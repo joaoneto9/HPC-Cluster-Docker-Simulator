@@ -10,6 +10,7 @@ RUN apt-get update && \
         slurmctld \
         slurm-client \
         prometheus \
+        prometheus-node-exporter \
         apptainer \
         squashfuse \
         fuse3 \

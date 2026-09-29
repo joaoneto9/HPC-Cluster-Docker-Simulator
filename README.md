@@ -168,3 +168,12 @@ make down             # stop and remove the containers
 - `make up` includes `--build`, so the Docker image is rebuilt whenever the `Dockerfile` changes.
 - `make run` is non-interactive until the `login` step: `wait` checks `docker compose ps` for containers in the `running` state (not `Up`) before dropping you into the login node, so no manual `docker exec` is needed.
 - Use `make force-key` only when you intentionally want to regenerate the munge key (e.g. for a fresh cluster); the current cluster will lose access.
+
+
+### Prometheus
+
+- Now you can look for the Prometheus metrics scrapes. To do that access this address - http://localhost:9090/ - on the browser after running the cluster:
+
+```bash
+make up
+```
