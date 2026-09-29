@@ -17,8 +17,10 @@ setup_slurm
 
 case "$NODE_ROLE" in
     controller) 
-        su -s /bin/bash munge -c "munged --foreground" & 
+        su -s /bin/bash munge -c "munged --foreground" &
+        prometheus --config.file=/etc/prometheus/prometheus.yml &
         slurmctld -D
+        scontrol reconfigure
         ;; 
     compute)  
         su -s /bin/bash munge -c "munged --foreground" & 

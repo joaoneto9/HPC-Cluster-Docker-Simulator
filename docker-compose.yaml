@@ -17,6 +17,7 @@
       volumes:
         - ./credentials/munge/munge.key:/tmp/munge.key:ro
         - ./credentials/slurm:/etc/slurm:ro
+        - ./credentials/prometheus:/etc/prometheus:ro
         - ./shared-files:/app
 
     compute-1:
