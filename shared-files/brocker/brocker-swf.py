@@ -4,13 +4,13 @@ Replay de um trace .swf no cluster Slurm REAL (sem simular/emular).
 
 Cada job do trace vira um `sbatch` de um toy-job (sleep via srun), com:
   - instante de submissao  = submit_time do SWF * time_scale
-  - duracao real do job    = run_time do SWF * time_scale
   - numero de tarefas      = procs do SWF reescalados para o tamanho do cluster
+  - duracao real do job    = run_time do SWF * time_scale
   - limite de tempo        = requested_time do SWF * time_scale (em minutos)
 
 Uso (dentro do container de login):
-  python3 swf_replay.py trace.swf --time-scale 0.001 --limit 200
-  python3 swf_replay.py trace.swf --dry-run
+  python3 brocker-swf.py [nome-do-arquivo-logs].swf --time-scale 0.001 --limit 200
+  python3 brocker-swf.py [nome-do-arquivo-logs].swf --dry-run
 """
 import argparse
 import math

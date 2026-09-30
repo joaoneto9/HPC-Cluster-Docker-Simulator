@@ -177,3 +177,18 @@ make down             # stop and remove the containers
 ```bash
 make up
 ```
+
+### Brocker
+
+- To reply a real HPC cluster logs information on the standard workload format (swf). look to this pipeline.
+
+1. Add the `swf` file in the directorie `./shared-files/brocker/`.
+2. Run theese commands:
+
+```bash
+make run # to login into the login node
+cd ./brocker
+
+python3 brocker-swf.py [archive-logs-name].swf --time-scale 0.001 --limit 200 
+python3 brocker-swf.py [archive-logs-name].swf --dry-run
+```
