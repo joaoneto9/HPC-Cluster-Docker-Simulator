@@ -1,6 +1,6 @@
   services:
     login:
-      build: .
+      build: ./images/login/.
       hostname: login
       environment:
         - NODE_ROLE=login
@@ -10,7 +10,7 @@
         - ./shared-files:/app
         
     controller:
-      build: .
+      build: ./images/controller/.
       hostname: controller
       ports: 
         - "9090:9090"
@@ -23,7 +23,7 @@
         - ./shared-files:/app
 
     compute-1:
-      build: .
+      build: ./images/compute/.
       hostname: compute-1
       privileged: true
       environment:
@@ -34,7 +34,7 @@
         - ./shared-files:/app
 
     compute-2:
-      build: .
+      build: ./images/compute/.
       hostname: compute-2
       privileged: true
       environment:

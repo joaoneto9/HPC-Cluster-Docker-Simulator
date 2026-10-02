@@ -1,4 +1,5 @@
 *.sif
+*.swf
 munge.key
 slurm.conf
 cgroup.conf
